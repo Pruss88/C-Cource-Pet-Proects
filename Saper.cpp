@@ -165,9 +165,6 @@ int main()
     while(count_otkr != (field_size*field_size) - mins_count){
         std::cout<< std::endl;
         int vibor;
-
-        show_pole(pole, field_size);
-
         show_pole(pole2, field_size);
 
         std::cout << "Open a point(1) or place a flag(2): ";
