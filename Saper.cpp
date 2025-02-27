@@ -53,15 +53,29 @@ void otkrit_noli(char** pole2, int** pole1, int i, int j, int* count_otkr){
     if(pole1[i][j] != 0 || pole2[i][j] != '*')
         return;
 
-    pole2[i][j] = 0;
+    pole2[i][j] = pole1[i][j];
 
     *count_otkr+=1;
 
-    if(i-1 >= 0 && pole1[i-1][j] == 0)otkrit_noli(pole2, pole1, i-1, j, count_otkr);
-    if(i+1 < 10 && pole1[i+1][j] == 0)otkrit_noli(pole2, pole1, i+1, j, count_otkr);
-    if(j-1 >= 0 && pole1[i][j-1] == 0)otkrit_noli(pole2, pole1, i, j-1, count_otkr);
-    if(j+1 < 10 && pole1[i][j+1] == 0)otkrit_noli(pole2, pole1, i, j+1, count_otkr);
+    if(i-1 >= 0 && pole1[i-1][j] == 0)
+        otkrit_noli(pole2, pole1, i-1, j, count_otkr);
+    else if(i-1 >= 0 && pole1[i-1][j] != -1)
+        {pole2[i-1][j] = pole1[i-1][j]; *count_otkr += 1;}
 
+    if(i+1 < 10 && pole1[i+1][j] == 0)
+        otkrit_noli(pole2, pole1, i+1, j, count_otkr);
+    else if(i + 1 < 10 && pole1[i+1][j] != -1)
+        {pole2[i+1][j] = pole1[i+1][j]; *count_otkr += 1;}
+
+    if(j-1 >= 0 && pole1[i][j-1] == 0)
+        otkrit_noli(pole2, pole1, i, j-1, count_otkr);
+    else if(j-1 >= 0 && pole1[i][j-1] != -1)
+        {pole2[i][j-1] = pole1[i][j-1]; *count_otkr += 1;}
+
+    if(j+1 < 10 && pole1[i][j+1] == 0)
+        otkrit_noli(pole2, pole1, i, j+1, count_otkr);
+    else if(j+1<10 && pole1[i][j+1] != -1)
+        {pole2[i][j+1] = pole1[i][j+1];  *count_otkr+=1;}
 }
 
 int main()
@@ -151,6 +165,8 @@ int main()
     while(count_otkr != (field_size*field_size) - mins_count){
         std::cout<< std::endl;
         int vibor;
+
+        show_pole(pole, field_size);
 
         show_pole(pole2, field_size);
 
