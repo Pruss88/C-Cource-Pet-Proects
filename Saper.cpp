@@ -49,7 +49,7 @@ void show_pole(int** pole, int max_field_size){
 
 }
 
-void otkrit_noli(char** pole2, int** pole1, int i, int j, int* count_otkr){
+void otkrit_noli(char** pole2, int** pole1, int i, int j, int field_size, int* count_otkr){
     if(pole1[i][j] != 0 || pole2[i][j] != '*')
         return;
 
@@ -57,24 +57,24 @@ void otkrit_noli(char** pole2, int** pole1, int i, int j, int* count_otkr){
 
     *count_otkr+=1;
 
-    if(i-1 >= 0 && pole1[i-1][j] == 0)
-        otkrit_noli(pole2, pole1, i-1, j, count_otkr);
-    else if(i-1 >= 0 && pole1[i-1][j] != -1)
+    if(i-1 >= 0 && pole1[i-1][j] == 0 && pole2[i-1][j] == '*')
+        otkrit_noli(pole2, pole1, i-1, j,field_size, count_otkr);
+    else if(i-1 >= 0 && pole1[i-1][j] != -1 && pole2[i-1][j] == '*')
         {pole2[i-1][j] = pole1[i-1][j]; *count_otkr += 1;}
 
-    if(i+1 < 10 && pole1[i+1][j] == 0)
-        otkrit_noli(pole2, pole1, i+1, j, count_otkr);
-    else if(i + 1 < 10 && pole1[i+1][j] != -1)
+    if(i+1 < field_size && pole1[i+1][j] == 0 && pole2[i+1][j] == '*')
+        otkrit_noli(pole2, pole1, i+1, j, field_size, count_otkr);
+    else if(i + 1 < field_size && pole1[i+1][j] != -1 && pole2[i+1][j] == '*')
         {pole2[i+1][j] = pole1[i+1][j]; *count_otkr += 1;}
 
-    if(j-1 >= 0 && pole1[i][j-1] == 0)
-        otkrit_noli(pole2, pole1, i, j-1, count_otkr);
-    else if(j-1 >= 0 && pole1[i][j-1] != -1)
+    if(j-1 >= 0 && pole1[i][j-1] == 0 && pole2[i][j-1] == '*')
+        otkrit_noli(pole2, pole1, i, j-1, field_size, count_otkr);
+    else if(j-1 >= 0 && pole1[i][j-1] != -1 && pole2[i][j-1] == '*')
         {pole2[i][j-1] = pole1[i][j-1]; *count_otkr += 1;}
 
-    if(j+1 < 10 && pole1[i][j+1] == 0)
-        otkrit_noli(pole2, pole1, i, j+1, count_otkr);
-    else if(j+1<10 && pole1[i][j+1] != -1)
+    if(j+1 < field_size && pole1[i][j+1] == 0 && pole2[i][j+1] == '*')
+        otkrit_noli(pole2, pole1, i, j+1, field_size, count_otkr);
+    else if(j+1<10 && pole1[i][j+1] != -1 && pole2[i][j+1] == '*')
         {pole2[i][j+1] = pole1[i][j+1];  *count_otkr+=1;}
 }
 
@@ -165,6 +165,7 @@ int main()
     while(count_otkr != (field_size*field_size) - mins_count){
         std::cout<< std::endl;
         int vibor;
+
         show_pole(pole2, field_size);
 
         std::cout << "Open a point(1) or place a flag(2): ";
@@ -173,24 +174,27 @@ int main()
         std::cout << "Enter the coordinates of the point:" << std::endl;
         int x, y;
         std::cin >> x >> y;
-
+        
         if(vibor == 1){
-            if(x > field_size || x < 0 || y > field_size || y < 0){
+            if(x > field_size || x < 1 || y > field_size || y < 1){
                 std::cout << "Incorrect point coordinates" << std::endl;
                 continue;
             }
             std::cout << std::endl;
 
-            if(pole[x-1][y-1] == 0)
-                otkrit_noli(pole2, pole, x-1, y-1, &count_otkr);
+            if(pole[x-1][y-1] == 0 && pole2[x-1][y-1] == '*')
+                otkrit_noli(pole2, pole, x-1, y-1, field_size, &count_otkr);
             else{
-                pole2[x-1][y-1] = pole[x-1][y-1];
+                if(pole2[x-1][y-1] == '*'){
+                    pole2[x-1][y-1] = pole[x-1][y-1];
+                    count_otkr++;
+                }
+
                 if(pole[x-1][y-1] == -1){
                     show_pole(pole2, field_size);
                     std::cout << "You stepped on a land mine" << std::endl;
                     break;
                 }
-                count_otkr++;
             }
         }
         else{
